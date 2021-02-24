@@ -7,7 +7,7 @@ const settings = require("./settings");
 module.exports = {
   sendMessage() {
     if (settings.getPushNotificationsEnabled()) {
-      if (!fs.existsSync(path.join(__dirname, "../../mail.conf"))) {
+      if (!fs.existsSync(path.join(__dirname, "../../mail.conf.js"))) {
         logger.debug(`Couldn't send message. Notifier config not found`);
         return;
       }

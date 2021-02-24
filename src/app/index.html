@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Deurbel</title>
+
+    <meta
+      name="viewport"
+      content="user-scalable=no, width=device-width, initial-scale=1.0"
+    />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/apple-touch-icon.png"
+    />
+
+    <style>
+      *,
+      :after,
+      :before {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --gutter-size: 16px;
+        --body-bg: #d8d8d8;
+      }
+
+      [v-cloak] {
+        display: none;
+      }
+
+      html,
+      body,
+      button {
+        height: 100%;
+        font-family: aktiv-grotesk, Helvetica, Arial, sans-serif;
+      }
+
+      button,
+      label,
+      textarea,
+      input {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      ::placeholder,
+      ::-webkit-input-placeholder {
+        color: #8f8f8f;
+      }
+
+      body {
+        padding: 0;
+        overflow: hidden;
+        background-color: var(--body-bg);
+        color: rgba(0, 0, 0, 0.8);
+      }
+
+      button {
+        border: none;
+        outline: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+      }
+
+      textarea {
+        background-color: #d8d8d8;
+        border: none;
+        outline: none;
+        resize: none;
+        font-size: 16px;
+        border-radius: 0;
+        -webkit-appearance: none;
+      }
+
+      ul {
+        padding: 0 8px;
+        list-style: none;
+      }
+
+      ul ul {
+        padding: 0;
+      }
+
+      ul > li:not(:first-child) > h2 {
+        margin-top: 24px;
+      }
+
+      h1 {
+        margin-bottom: 24px;
+        color: black;
+      }
+
+      h2 {
+        margin-bottom: 24px;
+        font-size: 18px;
+        color: black;
+      }
+
+      .view-container {
+        max-width: 600px;
+        padding: 60px var(--gutter-size);
+        margin: 0 auto;
+      }
+
+      .button {
+        padding: 8px 16px;
+        background: black;
+        font-size: 15px;
+        color: white;
+      }
+
+      .icon-button {
+        height: 40px;
+        width: 40px;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        place-content: center;
+        flex-direction: row;
+        background: transparent;
+        color: black;
+      }
+
+      .list {
+        padding: 0 8px;
+      }
+
+      .list-item {
+        height: 56px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        border-bottom: 1px solid #c2c2c2;
+      }
+
+      .list-item .line {
+        display: flex;
+        flex: 1;
+        white-space: nowrap;
+      }
+
+      .list-item .round-checkbox {
+        margin: -1px 16px 0 0;
+      }
+
+      .list-item.volume {
+        height: 96px;
+        flex-direction: column;
+        place-content: center;
+        place-items: start;
+      }
+
+      .list-item.volume > span {
+        margin-bottom: 8px;
+      }
+
+      .app-bar {
+        position: fixed;
+        right: 0;
+        left: 0;
+        height: 49px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .app-bar-row {
+        width: 100%;
+        max-width: 600px;
+        padding: 0 var(--gutter-size);
+        margin: 0 auto;
+      }
+
+      .top-app-bar {
+        background-color: #d8d8d8;
+        top: 0;
+        right: 0;
+        bottom: auto;
+      }
+
+      .bottom-app-bar {
+        background-color: #f1f1f1;
+        top: auto;
+        bottom: 0;
+      }
+
+      .bottom-app-bar .app-bar-button {
+        height: inherit;
+        background-color: transparent;
+        border: none;
+        flex: 1;
+        line-height: 1;
+        color: #8f8f8f;
+      }
+
+      .bottom-app-bar button.active {
+        color: black;
+      }
+
+      .toggle-checkbox + .toggle {
+        display: block;
+        width: 20px;
+        height: 12px;
+        background: #c2c2c2;
+        border-radius: 26px;
+        opacity: 1;
+        padding: 1px;
+        box-sizing: border-box;
+        margin: auto;
+        display: flex;
+        transition: background 0.5s ease;
+      }
+
+      .toggle-checkbox + .toggle .toggle-pill {
+        display: block;
+        width: 10px;
+        height: 10px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 0 1px black;
+        margin-left: 0;
+        transition: margin 0.08s cubic-bezier(0.77, 0.49, 1, 1);
+      }
+
+      .toggle-checkbox:checked + .toggle {
+        background: black;
+        transition: background 0.5s ease;
+      }
+
+      .toggle-checkbox:checked + .toggle .toggle-pill {
+        margin-left: calc(100% - 10px);
+      }
+
+      .slider-container {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .slider-container .slider {
+        display: flex;
+        flex: 1;
+        margin: 0 10px;
+      }
+
+      .slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 3px;
+        background: #c2c2c2;
+        outline: none;
+      }
+
+      .slider:hover {
+        opacity: 1;
+      }
+
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 27px;
+        height: 27px;
+        background: white;
+        border: none;
+        border-radius: 14px;
+        cursor: pointer;
+        box-shadow: 0 3px 7px rgba(0, 0, 0, 0.18);
+      }
+
+      label {
+        background: rgba(222, 222, 222, 0.2);
+        width: 42px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-self: center;
+        justify-items: center;
+        text-align: center;
+        margin: auto;
+        box-sizing: border-box;
+      }
+
+      .toggle-checkbox + .toggle {
+        transform: scale(2);
+      }
+
+      .toggle-checkbox {
+        position: absolute;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        width: 1px;
+        margin: -1px;
+      }
+
+      #voice-message-bar {
+        height: 100px;
+        width: 100%;
+        padding-bottom: 49px;
+      }
+
+      #voice-message-bar form {
+        height: 52px;
+        display: flex;
+        flex-direction: row;
+        place-items: center;
+      }
+
+      #voice-message-bar form textarea {
+        display: block;
+        height: 40px;
+        width: 100%;
+        padding: 8px;
+        line-height: 24px;
+        transition: width 0.35s ease-in-out;
+      }
+
+      /* #voice-message-bar form textarea:focus {
+        width: calc(100% - 44px);
+      } */
+
+      #voice-message-bar form button {
+        margin-left: 4px;
+        padding: 0;
+      }
+
+      .mb-2 {
+        margin-bottom: 16px;
+      }
+
+      .ml-n1 {
+        margin-left: -8px;
+      }
+
+      .px-1 {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <div class="view-container" v-cloak>
+        <!-- Event log -->
+        <div class="view" v-if="view === 'event-log'">
+          <div class="app-bar top-app-bar">
+            <div class="app-bar-row">
+              <button class="icon-button ml-n1" v-on:click="reloadEvents()">
+                <svg height="24" width="24" viewBox="0 0 24 24">
+                  <path
+                    d="M 12 2 C 6.486 2 2 6.486 2 12 C 2 17.514 6.486 22 12 22 C 17.514 22 22 17.514 22 12 L 20 12 C 20 16.411 16.411 20 12 20 C 7.589 20 4 16.411 4 12 C 4 7.589 7.589 4 12 4 C 14.205991 4 16.202724 4.9004767 17.650391 6.3496094 L 15 9 L 22 9 L 22 2 L 19.060547 4.9394531 C 17.251786 3.1262684 14.757292 2 12 2 z"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <h1>Activiteiten log</h1>
+          <ul class="mb-2">
+            <li v-for="group in events" v-for:key="'code'">
+              <h2>{{ group.label }}</h2>
+              <ul>
+                <li v-for="item in group.list">
+                  {{ item.time | formatTime }}
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Voice Message -->
+        <div class="view" v-if="view === 'voice-message'">
+          <h1>Spraakbericht</h1>
+          <div class="list mb-2">
+            <div
+              class="list-item"
+              v-for="zone of zones"
+              v-for:key="'id'"
+              v-on:click="zone.checked = !zone.checked"
+            >
+              <svg
+                class="round-checkbox"
+                height="24"
+                width="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  v-if="zone.checked"
+                  d="M12,2C6.477,2,2,6.477,2,12c0,5.523,4.477,10,10,10s10-4.477,10-10C22,6.477,17.523,2,12,2z M10,17.414l-4.707-4.707 l1.414-1.414L10,14.586l7.293-7.293l1.414,1.414L10,17.414z"
+                ></path>
+                <path
+                  v-if="!zone.checked"
+                  d="M 12 2 C 6.4889971 2 2 6.4889971 2 12 C 2 17.511003 6.4889971 22 12 22 C 17.511003 22 22 17.511003 22 12 C 22 6.4889971 17.511003 2 12 2 z M 12 4 C 16.430123 4 20 7.5698774 20 12 C 20 16.430123 16.430123 20 12 20 C 7.5698774 20 4 16.430123 4 12 C 4 7.5698774 7.5698774 4 12 4 z"
+                ></path>
+              </svg>
+              <svg viewBox="0 0 24 24"></svg>
+              <div class="line">{{ zone.name }}</div>
+            </div>
+            <div class="list-item volume">
+              <span>Volume {{ messageVolume + '%' }}</span>
+              <div class="slider-container">
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                  <path
+                    d="M15.1328 4L9.5 7.99999H6.00781L6 16H9.5L15.1328 20V4Z"
+                    fill="black"
+                  />
+                </svg>
+                <input
+                  class="slider"
+                  type="range"
+                  min="0"
+                  max="100"
+                  v-model="messageVolume"
+                  v-bind:style="{ backgroundImage:
+                'linear-gradient(to right, black 0%, black ' + messageVolume
+                + '%, #c2c2c2 ' + messageVolume + '%, #c2c2c2 100%)'}"
+                />
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                  <path
+                    d="M4.5 7.99999L10.1328 4V20L4.5 16H1L1.00781 7.99999H4.5ZM21.1766 4.42004C21.1346 4.35646 21.0833 4.29743 21.0273 4.24521L20.9923 4.20434L20.9853 4.21115C20.8242 4.08174 20.6189 4 20.3949 4C19.8792 4 19.4639 4.40641 19.4639 4.90592C19.4639 5.09437 19.5245 5.26919 19.6249 5.4145L19.6202 5.41904C21.1789 7.07649 22.1426 9.2743 22.1426 11.6969C22.1426 14.3806 20.9619 16.7827 19.0975 18.4833L19.1045 18.4901C18.9575 18.6513 18.8642 18.8602 18.8642 19.0941C18.8642 19.5959 19.2819 20 19.7952 20C20.0449 20 20.2712 19.9024 20.4392 19.7457L20.4416 19.7434C20.4487 19.7379 20.454 19.7316 20.4592 19.7254C20.4626 19.7214 20.4659 19.7175 20.4696 19.7139C22.6396 17.6932 24 14.8528 24 11.6969C24 8.90876 22.9243 6.37264 21.1766 4.42004ZM17.2166 7.19578C17.2097 7.17993 17.2052 7.18672 17.2006 7.19578C17.0358 6.95361 16.759 6.79518 16.4409 6.79518C15.9352 6.79518 15.5279 7.2003 15.5279 7.69822C15.5279 7.96528 15.6469 8.20292 15.8345 8.36814C16.7269 9.32776 17.2807 10.5974 17.2807 12.0052C17.2807 13.4514 16.6949 14.755 15.7567 15.7215C15.5668 15.8867 15.4432 16.1288 15.4432 16.3982C15.4432 16.8983 15.8528 17.3012 16.3562 17.3012C16.6171 17.3012 16.8482 17.1926 17.0152 17.0206C17.0399 16.9909 17.07 16.9673 17.0997 16.9441C17.147 16.907 17.1932 16.8708 17.2143 16.8123C18.379 15.5381 19.0975 13.8565 19.0975 12.0029C19.0975 10.1516 18.379 8.46999 17.2166 7.19578Z"
+                    fill="black"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div id="voice-message-bar" class="app-bar bottom-app-bar">
+            <div class="app-bar-row px-1">
+              <form @submit.prevent="sendVoiceMessage">
+                <textarea
+                  id="chat"
+                  rows="1"
+                  placeholder="Stuur een spraakbericht"
+                  v-model="message"
+                ></textarea>
+                <button type="submit" class="icon-button" v-if="message">
+                  <svg height="32" width="32" viewBox="0 0 32 32">
+                    <path
+                      d="M 27.671875 4.328125 L 2.1816406 13.597656 L 3.2929688 14.707031 L 18.402344 29.818359 L 27.671875 4.328125 z M 24.328125 7.671875 L 17.597656 26.183594 L 12.414062 21 L 19.707031 13.707031 L 18.292969 12.292969 L 11 19.585938 L 5.8164062 14.402344 L 24.328125 7.671875 z"
+                      fill="currentColor"
+                    ></path>
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="view" v-if="view === 'settings'">
+          <h1>Instellingen</h1>
+
+          <button class="button mb-2" v-on:click="testChime">
+            Test deurbel
+          </button>
+          <div class="list">
+            <div class="list-item">
+              <div class="line">Push-berichten ontvangen</div>
+              <label for="checkbox">
+                <input
+                  type="checkbox"
+                  class="toggle-checkbox"
+                  id="checkbox"
+                  v-model="pushNotificationsEnabled"
+                  v-on:change="togglePushNotifications()"
+                />
+                <div class="toggle">
+                  <div class="toggle-pill"></div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="app-bar bottom-app-bar">
+        <button
+          class="app-bar-button"
+          v-on:click="setView('event-log')"
+          v-bind:class="{ active: view === 'event-log' }"
+        >
+          <svg width="32" height="32" viewBox="0 0 32 32">
+            <path
+              d="M 5 5 L 5 27 L 27 27 L 27 5 Z M 7 7 L 25 7 L 25 25 L 7 25 Z M 10 10 L 10 12 L 22 12 L 22 10 Z M 10 15 L 10 17 L 22 17 L 22 15 Z M 10 20 L 10 22 L 22 22 L 22 20 Z"
+              fill="currentColor"
+            ></path>
+          </svg>
+        </button>
+        <button
+          class="app-bar-button"
+          v-on:click="setView('voice-message')"
+          v-bind:class="{ active: view === 'voice-message' }"
+        >
+          <svg width="32" height="32" viewBox="0 0 32 32">
+            <path
+              d="M 16 3 C 12.210938 3 8.765625 4.113281 6.21875 5.976563 C 3.667969 7.835938 2 10.507813 2 13.5 C 2 17.128906 4.472656 20.199219 8 22.050781 L 8 29 L 14.746094 23.9375 C 15.15625 23.96875 15.570313 24 16 24 C 19.789063 24 23.234375 22.886719 25.78125 21.027344 C 28.332031 19.164063 30 16.492188 30 13.5 C 30 10.507813 28.332031 7.835938 25.78125 5.976563 C 23.234375 4.113281 19.789063 3 16 3 Z M 16 5 C 19.390625 5 22.445313 6.015625 24.601563 7.589844 C 26.757813 9.164063 28 11.246094 28 13.5 C 28 15.753906 26.757813 17.835938 24.601563 19.410156 C 22.445313 20.984375 19.390625 22 16 22 C 15.507813 22 15.015625 21.972656 14.523438 21.925781 L 14.140625 21.894531 L 10 25 L 10 20.859375 L 9.421875 20.59375 C 6.070313 19.019531 4 16.386719 4 13.5 C 4 11.246094 5.242188 9.164063 7.398438 7.589844 C 9.554688 6.015625 12.609375 5 16 5 Z"
+              fill="currentColor"
+            ></path>
+          </svg>
+        </button>
+        <button
+          class="app-bar-button"
+          v-on:click="setView('settings')"
+          v-bind:class="{ active: view === 'settings' }"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M10.5 0V3.29883C9.15 3.44883 7.8 4.04883 6.75 4.79883L4.5 2.54883L2.39941 4.64941L4.64941 6.75C3.89941 7.95 3.44941 9.15 3.14941 10.5H0V13.5H3.14941C3.29941 14.85 3.89941 16.2 4.64941 17.25L2.39941 19.5L4.5 21.6006L6.75 19.3506C7.95 20.1006 9.15 20.5506 10.5 20.8506V24H13.5V20.8506C14.85 20.7006 16.2 20.1006 17.25 19.3506L19.5 21.6006L21.6006 19.5L19.3506 17.25C20.1006 16.05 20.5506 14.85 20.8506 13.5H24V10.5H20.8506C20.7006 9.15 20.1006 7.8 19.3506 6.75L21.6006 4.5L19.5 2.39941L17.25 4.64941C16.05 3.89941 14.85 3.44941 13.5 3.14941V0H10.5ZM12 6C15.3 6 18 8.7 18 12C18 15.3 15.3 18 12 18C8.7 18 6 15.3 6 12C6 8.7 8.7 6 12 6Z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <script>
+      function groupByRelativeTime(list, fn) {
+        if (list) {
+          const grouped = [
+            {
+              code: "future",
+              label: "Toekomst",
+              list: list.filter((item) => {
+                return moment().isAfter(moment().endOf("day"));
+              }),
+            },
+            {
+              code: "today",
+              label: "Vandaag",
+              list: list.filter((item) => {
+                const date = moment(fn(item));
+                const before = date.isSameOrBefore(moment().endOf("day"));
+                const after = date.isAfter(
+                  moment().endOf("day").subtract(1, "day")
+                );
+                return before && after;
+              }),
+            },
+            {
+              code: "yesterday",
+              label: "Gisteren",
+              list: list.filter((item) => {
+                const date = moment(fn(item));
+                const before = date.isSameOrBefore(
+                  moment().endOf("day").subtract(1, "day")
+                );
+                const after = date.isAfter(
+                  moment().endOf("day").subtract(2, "days")
+                );
+                return before && after;
+              }),
+            },
+            {
+              code: "earlier-this-week",
+              label: "Eerder deze week",
+              list: list.filter((item) => {
+                const date = moment(fn(item));
+                const before = date.isSameOrBefore(
+                  moment().endOf("day").subtract(2, "days")
+                );
+                const after = date.isAfter(
+                  moment().endOf("week").subtract(1, "week")
+                );
+                return before && after;
+              }),
+            },
+            {
+              code: "last-week",
+              label: "Afgelopen week",
+              list: list.filter((item) => {
+                const date = moment(fn(item));
+                const before1 = date.isSameOrBefore(
+                  moment().endOf("day").subtract(2, "days")
+                );
+                const before2 = date.isSameOrBefore(
+                  moment().endOf("week").subtract(1, "week")
+                );
+                const after = date.isAfter(
+                  moment().endOf("week").subtract(2, "weeks")
+                );
+                return before1 && before2 && after;
+              }),
+            },
+            {
+              code: "earlier-this-month",
+              label: "Eerder deze maand",
+              list: list.filter((item) => {
+                const date = moment(fn(item));
+                const before1 = date.isSameOrBefore(
+                  moment().endOf("day").subtract(2, "days")
+                );
+                const before2 = date.isSameOrBefore(
+                  moment().endOf("weeks").subtract(2, "weeks")
+                );
+                const after = date.isAfter(
+                  moment().endOf("month").subtract(1, "month")
+                );
+                return before1 && before2 && after;
+              }),
+            },
+            {
+              code: "last-month",
+              label: "Afgelopen maand",
+              list: list.filter((item) => {
+                const date = moment(fn(item));
+                const before1 = date.isSameOrBefore(
+                  moment().endOf("day").subtract(2, "days")
+                );
+                const before2 = date.isSameOrBefore(
+                  moment().endOf("week").subtract(2, "weeks")
+                );
+                const before3 = date.isSameOrBefore(
+                  moment().endOf("month").subtract(1, "month")
+                );
+                const after = date.isAfter(
+                  moment().endOf("month").subtract(2, "months")
+                );
+                return before1 && before2 && before3 && after;
+              }),
+            },
+            {
+              code: "earlier-this-year",
+              label: "Eerder dit jaar",
+              list: list.filter((item) => {
+                const date = moment(fn(item));
+                const before1 = date.isSameOrBefore(
+                  moment().endOf("day").subtract(2, "days")
+                );
+                const before2 = date.isSameOrBefore(
+                  moment().endOf("week").subtract(2, "weeks")
+                );
+                const before3 = date.isSameOrBefore(
+                  moment().endOf("month").subtract(2, "months")
+                );
+                const after = date.isAfter(
+                  moment().endOf("year").subtract(1, "year")
+                );
+                return before1 && before2 && before3 && after;
+              }),
+            },
+            {
+              code: "last-year",
+              label: "Afgelopen jaar",
+              list: list.filter((item) => {
+                const date = moment(fn(item));
+                const before1 = date.isSameOrBefore(
+                  moment().endOf("day").subtract(2, "days")
+                );
+                const before2 = date.isSameOrBefore(
+                  moment().endOf("week").subtract(2, "weeks")
+                );
+                const before3 = date.isSameOrBefore(
+                  moment().endOf("month").subtract(2, "months")
+                );
+                const before4 = date.isSameOrBefore(
+                  moment().endOf("year").subtract(1, "year")
+                );
+                const after = date.isAfter(
+                  moment().endOf("year").subtract(2, "years")
+                );
+                return before1 && before2 && before3 && before4 && after;
+              }),
+            },
+            {
+              code: "earlier",
+              label: "Eerder",
+              list: list.filter((item) => {
+                const date = moment(fn(item));
+                return date.isBefore(
+                  moment().endOf("year").subtract(2, "years")
+                );
+              }),
+            },
+          ];
+          return grouped.filter((group) => Boolean(group.list.length));
+        }
+      }
+
+      Vue.filter("formatTime", (time) => {
+        return moment(time).format("DD-MM-Y HH:mm");
+      });
+
+      var app = new Vue({
+        el: "#app",
+        data: {
+          events: [],
+          message: "",
+          messageVolume: 25,
+          pushNotificationsEnabled: false,
+          view: "voice-message",
+          zones: [],
+        },
+        methods: {
+          loadEvents() {
+            fetch("api/events")
+              .then((res) => res.json())
+              .then((res) => {
+                const grouped = groupByRelativeTime(
+                  res.data.reverse(),
+                  (item) => item.time
+                );
+                this.events = grouped;
+              });
+          },
+          loadSettings() {
+            fetch("api/settings")
+              .then((res) => res.json())
+              .then((res) => {
+                Object.keys(res.data).forEach((key) => {
+                  this[key] = res.data[key];
+                });
+              });
+          },
+          loadZones() {
+            fetch("api/zones")
+              .then((res) => res.json())
+              .then((res) => {
+                this.zones = res.data;
+              });
+          },
+          reloadEvents() {
+            this.loadEvents();
+          },
+          setView(view) {
+            this.view = view;
+          },
+          sendVoiceMessage() {
+            fetch("api/voice-message", {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(
+                this.zones.every((z) => z.checked)
+                  ? { message: this.message, volume: this.messageVolume }
+                  : {
+                      message: this.message,
+                      volume: this.messageVolume,
+                      zones: this.zones
+                        .filter((z) => z.checked)
+                        .map((z) => z.name),
+                    }
+              ),
+            });
+          },
+          togglePushNotifications() {
+            fetch("api/settings", {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                pushNotificationsEnabled: this.pushNotificationsEnabled,
+              }),
+            });
+          },
+          testChime() {
+            fetch("api/chime", { method: "POST" });
+          },
+        },
+        created() {
+          this.loadEvents();
+          this.loadSettings();
+          this.loadZones();
+        },
+      });
+    </script>
+  </body>
+</html>

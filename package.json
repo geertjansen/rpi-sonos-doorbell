@@ -1,0 +1,31 @@
+{
+  "name": "rpi-sonos-doorbell",
+  "version": "1.0.0",
+  "description": "Raspberry Pi doorbell that triggers a chime on one or more Sonos speakers",
+  "main": "index.js",
+  "scripts": {
+    "start": "sh scripts/start.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geertjansen/rpi-sonos-doorbell.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/geertjansen/rpi-sonos-doorbell/issues"
+  },
+  "homepage": "https://github.com/geertjansen/rpi-sonos-doorbell#readme",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "body-parser": "^1.19.0",
+    "express": "4.17.1",
+    "ip": "1.1.5",
+    "lowdb": "^1.0.0",
+    "node-aplay": "^1.0.3",
+    "nodemailer": "^6.4.13",
+    "rpio": "2.1.1",
+    "rxjs": "6.5.4"
+  }
+}
